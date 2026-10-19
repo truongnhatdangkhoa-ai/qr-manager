@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<script>try{var __t=localStorage.getItem("qr-manager-theme");if(__t==="light"||__t==="dark")document.documentElement.setAttribute("data-theme",__t)}catch(e){}</script>
+<title>QR Manager</title>
+<!-- QR Manager: tạo mã QR (văn bản, liên kết, Wi-Fi, danh bạ, email, SMS…), hàng loạt từ Excel/CSV (xuất ZIP PNG/SVG), in tem A4, quét mã bằng camera. Chạy offline, không có cơ sở dữ liệu, không gọi mạng. Cài đặt lưu localStorage 'qr-manager-v1'. -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#F3F5F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E131B" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="css/qr-manager.css"><!-- CSS của ứng dụng -->
+
+<style id="pageStyle"></style><!-- nội dung do js/qr-manager.js ghi theo khổ giấy; mặc định A4 nằm trong css/qr-manager.css -->
+</head>
+<body>
+<header class="appbar">
+  <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 1024 1024" aria-hidden="true" focusable="false"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f80ff"/><stop offset="1" stop-color="#0a3a8f"/></linearGradient><filter id="lgGlow" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="10"/></filter></defs><rect width="1024" height="1024" fill="url(#lgG)"/><g transform="translate(512 512) scale(1) translate(-512 -512)"><path fill="#fff" fill-rule="evenodd" d="M248.0,202 h138.0 a46.0,46.0 0 0 1 46.0,46.0 v138.0 a46.0,46.0 0 0 1 -46.0,46.0 h-138.0 a46.0,46.0 0 0 1 -46.0,-46.0 v-138.0 a46.0,46.0 0 0 1 46.0,-46.0z M272.84,248.0 h88.32 a24.84,24.84 0 0 1 24.84,24.84 v88.32 a24.84,24.84 0 0 1 -24.84,24.84 h-88.32 a24.84,24.84 0 0 1 -24.84,-24.84 v-88.32 a24.84,24.84 0 0 1 24.84,-24.84z"/><rect x="266.4" y="266.4" width="101.19999999999999" height="101.19999999999999" rx="22.264" fill="#fff"/><path fill="#fff" fill-rule="evenodd" d="M638.0,202 h138.0 a46.0,46.0 0 0 1 46.0,46.0 v138.0 a46.0,46.0 0 0 1 -46.0,46.0 h-138.0 a46.0,46.0 0 0 1 -46.0,-46.0 v-138.0 a46.0,46.0 0 0 1 46.0,-46.0z M662.84,248.0 h88.32 a24.84,24.84 0 0 1 24.84,24.84 v88.32 a24.84,24.84 0 0 1 -24.84,24.84 h-88.32 a24.84,24.84 0 0 1 -24.84,-24.84 v-88.32 a24.84,24.84 0 0 1 24.84,-24.84z"/><rect x="656.4" y="266.4" width="101.19999999999999" height="101.19999999999999" rx="22.264" fill="#fff"/><path fill="#fff" fill-rule="evenodd" d="M248.0,592 h138.0 a46.0,46.0 0 0 1 46.0,46.0 v138.0 a46.0,46.0 0 0 1 -46.0,46.0 h-138.0 a46.0,46.0 0 0 1 -46.0,-46.0 v-138.0 a46.0,46.0 0 0 1 46.0,-46.0z M272.84,638.0 h88.32 a24.84,24.84 0 0 1 24.84,24.84 v88.32 a24.84,24.84 0 0 1 -24.84,24.84 h-88.32 a24.84,24.84 0 0 1 -24.84,-24.84 v-88.32 a24.84,24.84 0 0 1 24.84,-24.84z"/><rect x="266.4" y="656.4" width="101.19999999999999" height="101.19999999999999" rx="22.264" fill="#fff"/><rect x="612" y="612" width="64" height="64" rx="14" fill="#fff"/><rect x="780" y="612" width="64" height="64" rx="14" fill="#fff"/><rect x="696" y="696" width="64" height="64" rx="14" fill="#fff"/><rect x="612" y="780" width="64" height="64" rx="14" fill="#fff"/><rect x="150" y="500" width="724" height="24" rx="12" fill="#5eead4" filter="url(#lgGlow)" opacity=".9"/><rect x="150" y="500" width="724" height="24" rx="12" fill="#5eead4"/></g></svg></div><h1>QR Manager</h1></div>
+  <button class="ib-app" id="stOpen" type="button" aria-label="Cài đặt"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button>
+</header>
+<div class="wrap">
+
+  <!-- ===================== TAB 1 ===================== -->
+  <section class="panel active" id="p1">
+    <div class="grid2">
+      <div>
+        <div class="card">
+          <h2>Nội dung mã QR</h2>
+          <div class="chips" id="typeChips"></div>
+          <div id="typeFields"></div>
+          <div class="hint" id="typeHint"></div>
+          <div id="t1msg"></div>
+        </div>
+        <details class="card acc" id="acc1">
+          <summary>Kiểu dáng mã QR</summary>
+          <div class="acc-body"><div id="style1"></div></div>
+        </details>
+      </div>
+      <div class="card sticky">
+        <h2>Xem trước</h2>
+        <div class="pv" id="pv1"></div>
+        <div class="pvinfo" id="pvinfo1"></div>
+        <div class="btns" style="justify-content:center">
+          <button class="btn primary" id="dlPng1" disabled>Tải PNG</button>
+          <button class="btn" id="dlSvg1" disabled>Tải SVG</button>
+          <button class="btn" id="copy1" disabled>Sao chép</button>
+        </div>
+        <p class="hint hide-m" style="margin-top:12px;text-align:center">SVG là ảnh vector, phóng to không bị vỡ — phù hợp khi đưa cho nhà in.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TAB 2 ===================== -->
+  <section class="panel" id="p2">
+    <div class="grid2">
+      <div>
+        <div class="card">
+          <h2>Nhập dữ liệu</h2>
+          <label class="drop" id="drop">
+            <b>Chọn file Excel (.xlsx) hoặc CSV — hoặc kéo thả vào đây</b>
+            <span>Mỗi dòng sẽ tạo một mã QR riêng</span>
+            <input type="file" id="fileIn" accept=".xlsx,.xlsm,.csv,.tsv,.txt">
+          </label>
+          <div id="fileInfo" class="hint" style="margin-top:8px"></div>
+          <div class="field" id="sheetPick" style="margin-top:10px" hidden>
+            <label for="sheetSel">Trang tính (sheet)</label>
+            <select id="sheetSel"></select>
+          </div>
+          <div class="field" style="margin-top:14px">
+            <label for="pasteBox">Hoặc dán trực tiếp từ Excel / gõ mỗi dòng một nội dung</label>
+            <textarea id="pasteBox" rows="5" placeholder="Mã hàng&#9;Tên sản phẩm&#9;Số tem&#10;SP001&#9;Gạo ST25 túi 5kg&#9;2&#10;SP002&#9;Nước mắm 500ml&#9;1"></textarea>
+          </div>
+          <div class="btns">
+            <button class="btn small" id="btnSampleX">Tải file Excel mẫu</button>
+            <button class="btn small" id="btnSampleData">Dùng dữ liệu mẫu</button>
+            <button class="btn small" id="btnClear">Xóa dữ liệu</button>
+          </div>
+          <div id="t2msg"></div>
+        </div>
+
+        <div class="card" id="mapCard" hidden>
+          <h2>Chọn cột dữ liệu</h2>
+          <label class="chk"><input type="checkbox" id="hasHeader"> Dòng đầu tiên là tiêu đề cột</label>
+          <div class="row">
+            <div class="field"><label for="mapContent">Nội dung mã QR</label><select id="mapContent"></select></div>
+            <div class="field"><label for="mapCode">Mã hàng</label><select id="mapCode"></select></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="mapName">Tên sản phẩm</label><select id="mapName"></select></div>
+            <div class="field"><label for="mapQty">Số tem cần in (tuỳ chọn)</label><select id="mapQty"></select></div>
+          </div>
+          <p class="hint">Nếu không chọn cột “Nội dung mã QR”, mã QR sẽ chứa <b>Mã hàng</b>. Cột “Số tem” chỉ dùng khi in tem ở màn In tem.</p>
+        </div>
+
+        <div class="card">
+          <h2>Kiểu mã QR &amp; xuất file</h2>
+          <div id="style2"></div>
+          <h3>Xuất file</h3>
+          <div class="row" id="exportOpts">
+            <div class="field"><label for="fmtSel">Định dạng ảnh</label>
+              <select id="fmtSel" data-k="format"><option value="png">PNG</option><option value="svg">SVG (vector)</option></select></div>
+            <div class="field"><label for="nameSel">Đặt tên file theo</label>
+              <select id="nameSel" data-k="naming">
+                <option value="code">Mã hàng (nếu có) / nội dung</option>
+                <option value="content">Nội dung mã QR</option>
+                <option value="seq">Số thứ tự (001, 002…)</option>
+                <option value="seqcode">STT + Mã hàng</option>
+              </select></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card sticky" style="max-height:calc(100vh - 24px);overflow:auto">
+          <div class="stat">
+            <div><span class="big" id="batchCount">0 mã QR</span> <span class="pill hide" id="batchSkip"></span></div>
+            <button class="btn primary" id="btnZip" disabled>Tải tất cả (ZIP)</button>
+          </div>
+          <div id="zipProg" class="hide" style="margin:8px 0"><progress id="zipBar" max="100" value="0"></progress><div class="hint" id="zipTxt"></div></div>
+          <div id="batchEmpty" class="hint" style="padding:30px 6px;text-align:center">Chưa có dữ liệu. Hãy chọn file Excel hoặc dán nội dung ở mục Nhập dữ liệu.</div>
+          <div class="cards" id="batchCards"></div>
+          <div style="text-align:center;margin-top:12px"><button class="btn small hide" id="btnMore">Hiển thị thêm</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TAB 3 ===================== -->
+  <section class="panel" id="p3">
+    <div class="p3-toolbar">
+      <div>
+        <b id="p3Count">Chưa có dữ liệu</b>
+        <div class="hint" id="p3Layout"></div>
+      </div>
+      <div class="btns">
+        <button class="btn" id="btnGoData">← Nhập dữ liệu</button>
+        <button class="btn primary" id="btnPrint" disabled>In tem / Lưu PDF</button>
+      </div>
+    </div>
+    <div class="p3-layout">
+      <div class="card p3-controls" id="p3Controls">
+        <h2>Bố cục tem</h2>
+        <div class="field"><label for="preset">Mẫu giấy tem có sẵn</label><select id="preset" data-k="preset"></select></div>
+
+        <h3>Khổ giấy</h3>
+        <div class="row">
+          <div class="field"><label>Loại giấy</label>
+            <select data-k="pageType"><option value="a4p">A4 dọc</option><option value="a4l">A4 ngang</option><option value="custom">Tùy chỉnh</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Rộng (mm)</label><input type="number" step="0.1" min="20" max="1000" data-k="pageW"></div>
+          <div class="field"><label>Cao (mm)</label><input type="number" step="0.1" min="20" max="1000" data-k="pageH"></div>
+        </div>
+
+        <h3>Lề in (mm)</h3>
+        <div class="row">
+          <div class="field"><label>Trên</label><input type="number" step="0.1" min="0" max="100" data-k="mt"></div>
+          <div class="field"><label>Dưới</label><input type="number" step="0.1" min="0" max="100" data-k="mb"></div>
+          <div class="field"><label>Trái</label><input type="number" step="0.1" min="0" max="100" data-k="ml"></div>
+          <div class="field"><label>Phải</label><input type="number" step="0.1" min="0" max="100" data-k="mr"></div>
+        </div>
+
+        <h3>Kích thước tem (mm)</h3>
+        <div class="row">
+          <div class="field"><label>Rộng</label><input type="number" step="0.1" min="8" max="500" data-k="labelW"></div>
+          <div class="field"><label>Cao</label><input type="number" step="0.1" min="8" max="500" data-k="labelH"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Cách nhau ngang</label><input type="number" step="0.1" min="0" max="50" data-k="gx"></div>
+          <div class="field"><label>Cách nhau dọc</label><input type="number" step="0.1" min="0" max="50" data-k="gy"></div>
+          <div class="field"><label>Lề trong tem</label><input type="number" step="0.1" min="0" max="30" data-k="pad"></div>
+        </div>
+        <div class="msg info" id="gridInfo" style="margin-top:0"></div>
+
+        <h3>Nội dung tem</h3>
+        <div class="field"><label>Cách sắp xếp</label>
+          <select data-k="layout"><option value="v">QR ở trên — chữ ở dưới</option><option value="h">QR bên trái — chữ bên phải</option></select></div>
+        <label class="chk"><input type="checkbox" data-k="showCode"> Hiện mã hàng</label>
+        <label class="chk"><input type="checkbox" data-k="showName"> Hiện tên sản phẩm</label>
+        <div class="row">
+          <div class="field"><label>Cỡ chữ mã (pt)</label><input type="number" step="0.5" min="4" max="40" data-k="codeSize"></div>
+          <div class="field"><label>Cỡ chữ tên (pt)</label><input type="number" step="0.5" min="4" max="40" data-k="nameSize"></div>
+          <div class="field"><label>Số dòng tên</label>
+            <select data-k="nameLines" data-num="1"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Cỡ mã QR</label>
+            <select data-k="qrMode"><option value="auto">Tự động (vừa tem)</option><option value="manual">Chọn tay</option></select></div>
+          <div class="field" id="qrSizeBox"><label>Cạnh QR (mm)</label><input type="number" step="0.5" min="5" max="200" data-k="qrSize"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Viền trắng QR (ô)</label><input type="number" step="1" min="0" max="8" data-k="qrMargin"></div>
+          <div class="field"><label>Màu QR</label><input type="color" data-k="fg"></div>
+          <div class="field"><label>Sửa lỗi</label>
+            <select data-k="ecl"><option value="L">L</option><option value="M">M</option><option value="Q">Q</option><option value="H">H</option></select></div>
+        </div>
+        <label class="chk"><input type="checkbox" data-k="border"> Vẽ viền nét đứt quanh mỗi tem (để cắt)</label>
+        <div id="logo3"></div>
+
+        <h3>Số lượng</h3>
+        <div class="row">
+          <div class="field"><label>Số tem mỗi dòng</label><input type="number" step="1" min="1" max="999" data-k="copies"></div>
+          <div class="field"><label>Bỏ qua N ô đầu</label><input type="number" step="1" min="0" max="999" data-k="skip"></div>
+        </div>
+        <p class="hint">“Số tem mỗi dòng” bị bỏ qua nếu bạn đã chọn cột “Số tem” ở màn Hàng loạt. “Bỏ qua N ô đầu” dùng khi tờ giấy tem đã bị bóc mất một số ô.</p>
+        <div id="p3warn"></div>
+      </div>
+
+      <div>
+        <div class="p3-preview" id="p3Preview">
+          <div class="hint" style="padding:30px;text-align:center;background:var(--card);border-radius:10px">Chưa có dữ liệu để in. Hãy sang màn “Hàng loạt” để nhập danh sách mã hàng.</div>
+        </div>
+        <div class="card no-print" style="margin-top:12px">
+          <h2 style="font-size:14.5px">Mẹo in cho đúng kích thước</h2>
+          <ul id="helpbox" style="margin:0;padding-left:20px">
+            <li>Bấm <b>In tem / Lưu PDF</b>. Trong hộp thoại in: chọn <b>Tỷ lệ (Scale) = 100%</b> / “Actual size”, đặt <b>Lề = Không (None)</b>, tắt “Đầu trang và chân trang”.</li>
+            <li>Muốn lưu thành file PDF: chọn máy in “Lưu dạng PDF” (Save as PDF).</li>
+            <li>Nên in thử một tờ giấy thường, đặt chồng lên tờ giấy tem và soi dưới ánh sáng để chỉnh lề trước khi in thật.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LỊCH SỬ (Đã tạo / Đã quét) ===================== -->
+  <section class="panel" id="p4">
+    <div class="seg" role="tablist" aria-label="Loại lịch sử">
+      <button class="on" data-seg="made" type="button">Đã tạo</button>
+      <button data-seg="scanned" type="button">Đã quét</button>
+    </div>
+    <div class="card" id="segMade">
+      <div class="stat"><h2 style="margin:0">Mã đã tạo gần đây</h2><button class="btn small" id="histClear">Xóa tất cả</button></div>
+      <p class="hint" style="margin:6px 0 12px">Lưu tối đa 30 mục, chỉ trong máy này. “Mở lại” đưa nội dung về màn Tạo mã để tải lại; kiểu dáng lấy theo cài đặt hiện tại.</p>
+      <div id="histList"></div>
+    </div>
+    <div class="card" id="segScanned" hidden>
+      <div class="stat"><h2 style="margin:0">Đã quét gần đây</h2><button class="btn small" id="scHistClear">Xóa tất cả</button></div>
+      <p class="hint" style="margin:6px 0 12px">Lưu tối đa 50 mã quét gần nhất, chỉ trong máy này. Chạm “Xem” để mở lại thông tin của mã.</p>
+      <div id="scHist"></div>
+    </div>
+  </section>
+
+  <p class="hint" style="text-align:center;margin-top:18px"><a href="privacy.html">Chính sách quyền riêng tư</a></p>
+</div>
+
+<nav class="tabs" role="tablist" aria-label="Chức năng">
+  <button class="on" data-tab="p1" role="tab"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><path d="M14 14h2.5v2.5H14zM19 14v2.5M16.5 19.5H21M19 19.5V21"/></svg></span><span>Tạo mã</span></button>
+  <button data-tab="p2" role="tab"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M3.5 15h17M10 4.5v15"/></svg></span><span>Hàng loạt</span></button>
+  <div class="fab-slot"><button class="fab" id="scOpen" type="button" aria-label="Quét mã QR / mã vạch"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8.5V6a2 2 0 0 1 2-2h2.5M15.5 4H18a2 2 0 0 1 2 2v2.5M20 15.5V18a2 2 0 0 1-2 2h-2.5M8.5 20H6a2 2 0 0 1-2-2v-2.5"/><path d="M7.5 12h9"/></svg></button><span class="lb">Quét mã</span></div>
+  <button data-tab="p3" role="tab"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 9V3.5h10V9"/><rect x="3.5" y="9" width="17" height="8" rx="2"/><rect x="7" y="14" width="10" height="6.5" rx="1"/></svg></span><span>In tem</span></button>
+  <button data-tab="p4" role="tab"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><span>Lịch sử</span></button>
+</nav>
+
+<!-- ===== Màn hình quét toàn màn hình (mở bằng nút Quét mã ở giữa thanh dưới) ===== -->
+<div id="scanner" class="scanner" hidden role="dialog" aria-modal="true" aria-label="Quét mã">
+  <video id="scVideo" playsinline muted></video>
+  <div class="sc-frame" id="scFrame" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="sc-line"></span></div>
+  <div class="sc-top">
+    <button class="ib" id="scClose" type="button" aria-label="Đóng"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="sc-title">Quét mã</div>
+    <div class="grp">
+      <button class="ib" id="scBeepBtn" type="button" aria-label="Tiếng bíp và rung" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+      <button class="ib" id="scTorch" type="button" aria-label="Bật đèn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3h8v4l-2 3v10a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 10 20V10L8 7z"/><path d="M12 13v2.5"/></svg></button>
+    </div>
+  </div>
+  <div class="sc-hint" id="scHintTxt">Đưa mã QR hoặc mã vạch vào khung</div>
+  <div class="sc-msg" id="scMsg"></div>
+  <div class="sc-bottom">
+    <button class="sc-act" id="scPick" type="button"><span class="ib"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5L20 16"/></svg></span><span>Chọn ảnh</span></button>
+    <button class="sc-act" id="scSwitch" type="button" hidden><span class="ib"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8.5h10a4 4 0 0 1 4 4"/><path d="M15.5 6L13 8.5l2.5 2.5"/><path d="M20 15.5H10a4 4 0 0 1-4-4"/><path d="M8.5 18l2.5-2.5L8.5 13"/></svg></span><span>Đổi camera</span></button>
+  </div>
+  <input type="file" id="scFile" accept="image/*" hidden>
+</div>
+
+<!-- ===== Khay kết quả (bottom sheet) ===== -->
+<div id="bs" class="bs-scrim" hidden>
+  <div class="bs-panel" role="dialog" aria-modal="true" aria-label="Kết quả quét">
+    <div class="bs-grab" id="bsGrab"></div>
+    <div id="scResult"></div>
+  </div>
+</div>
+
+<!-- ===== Cài đặt (Giao diện Sáng/Tối + Ngôn ngữ) ===== -->
+<div id="st" class="bs-scrim" hidden>
+  <div class="bs-panel" role="dialog" aria-modal="true" aria-label="Cài đặt">
+    <div class="bs-grab"></div>
+    <h2 class="st-title">Cài đặt</h2>
+    <div class="st-group"><div class="st-label">Giao diện</div>
+      <div class="seg c3" id="stTheme" role="group" aria-label="Giao diện"><button data-v="auto" type="button">Theo hệ thống</button><button data-v="light" type="button">Sáng</button><button data-v="dark" type="button">Tối</button></div></div>
+    <div class="st-group"><div class="st-label">Ngôn ngữ</div>
+      <div class="seg" id="stLang" role="group" aria-label="Ngôn ngữ"><button data-v="vi" type="button" data-notr>Tiếng Việt</button><button data-v="en" type="button" data-notr>English</button></div></div>
+    <div class="st-group st-about"><div class="st-label">Giới thiệu</div>
+      <p>QR Manager · Ứng dụng chạy độc lập; dữ liệu chỉ lưu trên máy này.</p>
+      <p><a href="privacy.html">Chính sách quyền riêng tư</a></p></div>
+  </div>
+</div>
+
+<div id="toast" class="msg ok hide" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9;box-shadow:0 4px 18px rgba(0,0,0,.25);padding:10px 16px"></div>
+
+
+
+<script src="js/native-shim.js"></script>
+<script src="js/i18n.js"></script><!-- Ngôn ngữ giao diện: Tiếng Việt / English -->
+<script src="js/qr-manager.js"></script><!-- JS của ứng dụng: JSZip + QRCode + code chính -->
+<script src="js/jsqr.min.js"></script><!-- jsQR (Apache-2.0): giải mã QR nhanh, chạy offline -->
+<script src="js/zxing.min.js"></script><!-- ZXing (MIT): giải mã QR + mã vạch, chạy offline -->
+<script src="js/quet-ma.js"></script><!-- Quét mã bằng camera / ảnh -->
+<script src="js/settings.js"></script><!-- Cài đặt: giao diện Sáng/Tối + ngôn ngữ -->
+<script>if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script>
+</body>
+</html>
