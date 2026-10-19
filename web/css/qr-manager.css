@@ -209,8 +209,10 @@ html[data-theme="dark"] .pv canvas{box-shadow:0 0 0 1px var(--line)}
 /* =====================================================================
    CHUẨN MOBILE: vùng chạm >= 48px, chữ nhập 16px, bo góc 12-16px, khoảng cách lưới 8dp
    ===================================================================== */
-html,body{max-width:100%;overflow-x:hidden}
-body{font:15px/1.5 var(--font);-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+/* Chặn tràn ngang mà KHÔNG biến body thành khung cuộn riêng (overflow-x:hidden trên cả html lẫn body khiến WebView Android không vuốt cuộn dọc được) */
+html,body{max-width:100%}
+html{overflow-x:hidden;overflow-y:auto;height:auto}
+body{overflow:visible;overflow-x:clip;font:15px/1.5 var(--font);-webkit-tap-highlight-color:transparent;touch-action:pan-x pan-y}
 .card{border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
 .card + .card{margin-top:12px}
 .card h2{font-size:17px;font-weight:700;margin-bottom:12px}
@@ -279,7 +281,7 @@ details.acc>.acc-body{padding:0 16px 16px}
   #p1 .card.sticky .btns .btn{min-width:0;padding:0 6px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .p3-toolbar{position:sticky;top:calc(var(--sat) + 56px);z-index:10;border-radius:14px;box-shadow:var(--shadow)}
   .p3-controls{border-radius:var(--r);position:static;max-height:none;overflow:visible}/* tránh khung cuộn lồng nhau chặn thao tác vuốt trang */
-  .p3-preview{overflow-x:auto;overflow-y:visible}
+  .p3-preview{overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
   .p3-toolbar{flex-direction:column;align-items:stretch;gap:10px}
   .p3-toolbar .btns{display:grid;grid-template-columns:1fr 1.4fr}
 }
