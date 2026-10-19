@@ -23,6 +23,7 @@
 - Dữ liệu người dùng chỉ lưu trên máy (localStorage); không gửi đi đâu.
 
 ## 4. Nhật ký thay đổi (thêm dòng mới ở TRÊN CÙNG mỗi lần tăng số)
+- 1.1.4 — Bỏ link Chính sách ngoài màn hình chính (chỉ còn trong Cài đặt); thẻ Xem trước rộng đủ chiều ngang trên mobile (`align-items:stretch`); `privacy.html` có nút "← Quay lại" (về `./`) và nút Back/vuốt Back của Android cũng quay về app.
 - 1.1.3 — Thêm hiển thị số phiên bản (Cài đặt → Giới thiệu); `sw.js` lấy tên cache từ `version.js`; bỏ `version.json`; thêm CLAUDE.md.
 - 1.1.2 — Sửa tự cập nhật: `sw.js` dùng `cache:'no-cache'` (bỏ đệm HTTP 10 phút của GitHub Pages); tự tải lại khi có bản mới.
 - 1.1.1 — Sửa lỗi không vuốt cuộn dọc được: bỏ `overflow-x:hidden` kép trên `html`/`body` và `overscroll-behavior-y:none`; `.p3-preview` trên mobile không còn khung cuộn dọc lồng.

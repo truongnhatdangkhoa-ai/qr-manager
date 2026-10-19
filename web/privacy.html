@@ -12,9 +12,13 @@ main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
 h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:24px 0 6px}
 p,li{color:var(--ink)}.muted{color:var(--muted);font-size:14px}.tg{text-align:right;font-size:14px;margin-bottom:6px}a{color:var(--acc)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px)) 8px 0;border-bottom:1px solid var(--line)}
+.back{display:inline-flex;align-items:center;gap:6px;min-height:48px;padding:0 14px;border:0;background:none;color:var(--acc);font:600 16px/1 inherit;font-family:inherit;cursor:pointer;border-radius:12px}
+.back:active{background:rgba(127,127,127,.18)}
 </style>
 </head>
 <body>
+<div class="bar"><button type="button" class="back" id="back">← <span id="backT">Quay lại</span></button></div>
 <main><div class="card">
 <div class="tg"><a href="#" data-l="vi">Tiếng Việt</a> · <a href="#" data-l="en">English</a></div>
 <div id="vi" lang="vi">
@@ -102,8 +106,14 @@ p,li{color:var(--ink)}.muted{color:var(--muted);font-size:14px}.tg{text-align:ri
 </div></main>
 <script>
 (function(){var q=/[?&]lang=(en|vi)/.exec(location.search),l=q?q[1]:null;try{l=l||localStorage.getItem("qr-manager-lang")}catch(e){}if(l!=="en"&&l!=="vi")l=/^vi/i.test(navigator.language||"")?"vi":"en";
-function set(x){document.getElementById("vi").hidden=x!=="vi";document.getElementById("en").hidden=x!=="en";document.documentElement.lang=x;document.title=x==="en"?"Privacy Policy — QR Manager":"Chính sách quyền riêng tư — QR Manager";}
-set(l);[].forEach.call(document.querySelectorAll(".tg a"),function(a){a.addEventListener("click",function(e){e.preventDefault();set(a.dataset.l)})});})();
+function set(x){document.getElementById("vi").hidden=x!=="vi";document.getElementById("en").hidden=x!=="en";document.documentElement.lang=x;document.getElementById("backT").textContent=x==="en"?"Back":"Quay lại";document.title=x==="en"?"Privacy Policy — QR Manager":"Chính sách quyền riêng tư — QR Manager";}
+set(l);
+function goBack(){location.replace("./")}
+try{history.pushState({pv:1},"")}catch(e){}
+addEventListener("popstate",goBack);/* nút Back / vuốt Back của Android cũng quay về app */
+document.getElementById("back").addEventListener("click",goBack);
+addEventListener("keydown",function(e){if(e.key==="Escape")goBack()});
+[].forEach.call(document.querySelectorAll(".tg a"),function(a){a.addEventListener("click",function(e){e.preventDefault();set(a.dataset.l)})});})();
 </script>
 </body>
 </html>
