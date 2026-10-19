@@ -1,0 +1,54 @@
+name: "Bước 2B: Build APK test (tự cập nhật từ GitHub)"
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      VERSION_CODE: ${{ github.run_number }}
+      VERSION_NAME: 1.1.${{ github.run_number }}
+      REMOTE_UPDATE: '1'   # bản test: mở nội dung từ GitHub Pages
+      TEST_BUILD: '1'      # mã app thêm đuôi .test, cài song song với bản Play
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - name: Chuẩn bị khóa ký (nếu đã có secrets)
+        env:
+          KS_B64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/release.jks" >> $GITHUB_ENV
+            echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+            echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+            echo "SIGNED=1" >> $GITHUB_ENV
+          else
+            echo "::warning::Chưa có khóa ký (secrets) — build APK debug để thử. Làm 'Bước 1' nếu muốn APK ký."
+          fi
+      - run: node scripts/prepare-config.js
+      - run: npm install --no-audit --no-fund
+      - run: npx cap add android
+      - run: npx capacitor-assets generate --android
+      - run: node scripts/patch-android.js
+      - run: npx cap sync android
+      - name: Build
+        working-directory: android
+        run: |
+          if [ "$SIGNED" = "1" ]; then ./gradlew assembleRelease --no-daemon
+          else ./gradlew assembleDebug --no-daemon; fi
+      - name: Gom file kết quả
+        run: |
+          mkdir out
+          if [ "$SIGNED" = "1" ]; then
+            cp android/app/build/outputs/apk/release/app-release.apk out/QRManager-test.apk
+          else
+            cp android/app/build/outputs/apk/debug/app-debug.apk out/QRManager-test-debug.apk
+          fi
+      - uses: actions/upload-artifact@v4
+        with: { name: QRManager-test-apk, path: out/* }
