@@ -14,6 +14,9 @@ Bản test cần mạng và cần Pages đã chạy (bước 2). Không dùng b�
 
 Xem `PLAY-CHECKLIST.md` để đưa app lên Google Play.
 
+## Số phiên bản
+Xem **CLAUDE.md**: số phiên bản nằm ở `web/js/version.js`, hiện trong app ở Cài đặt → Giới thiệu; mỗi lần sửa file trong `web/` phải tăng số cuối thêm 1.
+
 ## Đổi icon
 Thay `assets/icon-only.png`, `icon-foreground.png`, `icon-background.png` (1024×1024) rồi chạy lại Bước 2A (và 2B nếu muốn). Icon bản web nằm ở `web/icons/`.
 

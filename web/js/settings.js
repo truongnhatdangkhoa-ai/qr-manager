@@ -33,5 +33,6 @@ $('#stTheme').addEventListener('click',function(e){var b=e.target.closest('butto
 $('#stLang').addEventListener('click',function(e){var b=e.target.closest('button[data-v]');if(b&&window.QM_I18N){QM_I18N.set(b.dataset.v);mark();}});
 function links(){var l=window.QM_LANG?QM_LANG():'vi';[].forEach.call(document.querySelectorAll('a[href^="privacy.html"]'),function(a){a.setAttribute('href','privacy.html?lang='+l);});}
 window.addEventListener('qm-lang',function(){mark();links();});links();
+var av=$('#appVer');if(av)av.textContent=self.APP_VERSION||'?';
 applyTheme(curTheme());mark();
 })();

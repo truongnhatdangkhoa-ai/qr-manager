@@ -295,6 +295,7 @@
       <div class="seg" id="stLang" role="group" aria-label="Ngôn ngữ"><button data-v="vi" type="button" data-notr>Tiếng Việt</button><button data-v="en" type="button" data-notr>English</button></div></div>
     <div class="st-group st-about"><div class="st-label">Giới thiệu</div>
       <p>QR Manager · Ứng dụng chạy độc lập; dữ liệu chỉ lưu trên máy này.</p>
+      <p>Phiên bản: <b id="appVer" data-notr>…</b></p>
       <p><a href="privacy.html">Chính sách quyền riêng tư</a></p></div>
   </div>
 </div>
@@ -303,6 +304,7 @@
 
 
 
+<script src="js/version.js"></script><!-- Số phiên bản (nguồn duy nhất) -->
 <script src="js/native-shim.js"></script>
 <script src="js/i18n.js"></script><!-- Ngôn ngữ giao diện: Tiếng Việt / English -->
 <script src="js/qr-manager.js"></script><!-- JS của ứng dụng: JSZip + QRCode + code chính -->
@@ -310,6 +312,6 @@
 <script src="js/zxing.min.js"></script><!-- ZXing (MIT): giải mã QR + mã vạch, chạy offline -->
 <script src="js/quet-ma.js"></script><!-- Quét mã bằng camera / ảnh -->
 <script src="js/settings.js"></script><!-- Cài đặt: giao diện Sáng/Tối + ngôn ngữ -->
-<script>if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script>
+<script>if("serviceWorker"in navigator){var hadC=!!navigator.serviceWorker.controller,rl=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(!hadC||rl)return;rl=true;location.reload()});addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){r.update()}).catch(function(){})})}</script>
 </body>
 </html>
